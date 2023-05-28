@@ -22,6 +22,7 @@ def main():
     else:
         # Running on a non-monty computer
         pass
-
+    
+    # Assign inputs to copycat knobs
 
 main()
