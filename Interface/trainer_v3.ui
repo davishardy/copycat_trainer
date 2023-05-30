@@ -71,6 +71,9 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="text">
+         <string>path to first frame</string>
+        </property>
        </widget>
       </item>
       <item>
@@ -129,6 +132,9 @@
           <width>200</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="text">
+         <string>path to first frame</string>
         </property>
        </widget>
       </item>
@@ -191,6 +197,9 @@
           <width>200</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="text">
+         <string>path to model</string>
         </property>
        </widget>
       </item>
@@ -307,8 +316,14 @@
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
             </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Use GPU:</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -337,7 +352,11 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="epoch_value"/>
+           <widget class="QLineEdit" name="epoch_value">
+            <property name="text">
+             <string>10000</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -574,6 +593,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="text">
+           <string>100</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -613,6 +635,9 @@
             <width>100</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="text">
+           <string>1000</string>
           </property>
          </widget>
         </item>
