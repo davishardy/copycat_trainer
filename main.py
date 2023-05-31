@@ -24,7 +24,7 @@ cur_sys = platform.system()
 if cur_sys == "Darwin":
     sys.path.append('/Applications/Nuke13.2v6/Nuke13.2v6.app/Contents/MacOS/plugins/nuke_internal')
 elif cur_sys == "Linux":
-    sys.path.append('/Applications/Nuke13.2v6/Nuke13.2v6.app/Contents/MacOS/plugins/nuke_internal')
+    sys.path.append('/usr/local/foundry/Nuke13.2v2/pythonextensions/site-packages')
 elif cur_sys == "Windows":
     sys.path.append(r'C:\Program Files\Nuke13.2v2\Lib\site-packages')
 else:
@@ -50,26 +50,26 @@ class MainWindow(QDialog):
 
     def gt_browseimage(self):
         # Taken from third assignment
-        fname = QFileDialog.getOpenFileName(self, 'Open file', f'/home/{current_user}', 'Images (*.png, *.jpg, *.exr, *.tif)')
+        fname = QFileDialog.getOpenFileName(self, 'Open file', f'/home/{current_user}')# , 'Images (*.png, *.jpg, *.exr, *.tif)')
         self.gt_file_path.setText(fname[0])
-        self.gt_filepath = "/Users/davishardy/SCAD/Sophomore/Spring/VSFX_313/Class_6/frames/frame.0001.exr" #fname[0]
+        self.gt_filepath = fname[0]
 
     def input_browseimage(self):
         # Taken from third assignment
-        fname = QFileDialog.getOpenFileName(self, 'Open file', f'/home/{current_user}', 'Images (*.png, *.jpg, *.exr, *.tif)')
+        fname = QFileDialog.getOpenFileName(self, 'Open file', f'/home/{current_user}') # , 'Images (*.png, *.jpg, *.exr, *.tif)')
         self.input_file_path.setText(fname[0])
-        self.input_filepath = "/Users/davishardy/SCAD/Sophomore/Spring/VSFX_313/Class_6/frames/frame.0001.exr" #fname[0]
+        self.input_filepath = fname[0]
 
     def data_browsedir(self):
         # Taken from third assignment
-        fname = QFileDialog.getOpenFileName(self, 'Open Directory', f'/home/{current_user}')
+        fname = QFileDialog.getExistingDirectory(self, 'Open Directory', f'/home/{current_user}')
         self.data_dir_path.setText(fname[0])
-        self.data_dir = "/Users/davishardy/SCAD/Sophomore/Spring/VSFX_313/Class_6/frames" #os.path.dirname(fname[0])
+        self.data_dir = fname[0]
 
     def script_browsedir(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open Directory', f'/home/{current_user}', 'Images (*.nk)')
+        fname = QFileDialog.getOpenFileName(self, 'Open Nuke File', f'/home/{current_user}', 'Nuke Files (*.nk)')
         self.script_path.setText(fname[0])
-        self.script_dir = "/Users/davishardy/SCAD/Sophomore/Spring/VSFX_313/Class_6/frames/test.nk" #os.path.dirname(fname[0])
+        self.script_dir = fname[0]
 
     def generate_nk_python(self):
         if self.gpu_switch.isChecked() == True:
@@ -83,9 +83,14 @@ class MainWindow(QDialog):
         self.checkpoint_value = int(self.checkpoint_quantity.text())
         self.model_size_modal = str(self.model_size.currentText())
         self.crop_size_modal = int(str(self.crop_size.currentText()))
-        if frame_util.validate_inputs([self.gt_filepath, self.input_filepath]) == True:
+        try:
+            frame_util.validate_inputs([self.gt_filepath, self.input_filepath]) == True
+
+        except ValueError:
+            print("nope")
+        else:
             padding = frame_util.get_pad(self.gt_filepath)
-            
+
             gt_elements = frame_util.file_elements(self.gt_filepath)
             gt_dir = os.path.dirname(self.gt_filepath)
             gt_with_pad = os.path.join(gt_dir, f"{gt_elements[0]}.{padding}.{gt_elements[2]}")

@@ -6,8 +6,9 @@
 # Import modules
 import os
 import glob
-os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
-import cv2  # Has to be below the env variable so it loads with that the EXR capabilities
+# https://stackoverflow.com/a/57215414
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
+import cv2  # Has to be under env var
 
 
 def file_elements(full_path):
@@ -33,7 +34,11 @@ def file_elements(full_path):
             return None
 
         else:
-            return (base_name_elements[0], base_name_elements[1], base_name_elements[2])
+            return (
+                base_name_elements[0],
+                base_name_elements[1],
+                base_name_elements[2]
+                )
 
 
 def validate_inputs(paths):
@@ -49,30 +54,41 @@ def validate_inputs(paths):
     frames_in_path = []
 
     for path in paths:
-        path_dir = os.path.dirname()
+        path_dir = os.path.dirname(path)
         path_elements = file_elements(path)
-        included_frames = glob.glob(os.path.join(path_dir, path_elements[0], "*"))
+        included_frames = glob.glob(
+            os.path.join(path_dir, path_elements[0], "*")
+            )
 
         frames_in_path.append(len(included_frames))
 
         for frame in included_frames:
-            cur_frame = cv2.imread(frame, cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH)  # Allows for reading of EXR's
+            # Allows for reading of EXR's
+            cur_frame = cv2.imread(frame,
+                                   cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH
+                                   )
             dimensions = cur_frame.shape
 
             widths.append(dimensions[1])
             heights.append(dimensions[0])
-    
+
     # Creates sets to get rid of duplicate outputs
     widths = set(widths)
     heights = set(heights)
     frame_quantity = set(frames_in_path)
-    
+
     if len(widths) and len(heights) and len(frame_quantity) == 1:
         return True
     else:
         return False
 
+
 def get_pad(file_path):
+    """
+    Generates padding to replace frame numbers
+    Inputs: File path of frame
+    Outputs: Padding with right amount of pound signs (####)
+    """
     elements = file_elements(file_path)
     pad_size = len(elements[1])
     pad = "#"*pad_size
