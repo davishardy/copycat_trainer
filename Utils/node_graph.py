@@ -26,18 +26,18 @@ else:
 def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, image_interval, crop_size, checkpoint_interval, nuke_file, python_file):
     py_command = []
     # Create read nodes
-    py_command.append(f'gt_read = nuke.nodes.Read(name="Ground_Truth", file= {gt_file})')
-    py_command.append(f'input_read = nuke.nodes.Read(name="Input", file= {input_file})')
+    py_command.append(f'gt_read = nuke.nodes.Read(name="Ground_Truth", file= "{gt_file}")')
+    py_command.append(f'input_read = nuke.nodes.Read(name="Input", file= "{input_file}")')
     # Create CopyCat node
     py_command.append(f'cc_trainer = nuke.nodes.CopyCat(name="Train", inputs= [input_read, gt_read])')
     # Edit CopyCat node parameters
-    py_command.append(f'cc_trainer["useGPUIfAvailable"].setValue({gpu})')
-    py_command.append(f'cc_trainer["dataDirectory"].setValue({data_directory})')
+    py_command.append(f'cc_trainer["useGPUIfAvailable"].setValue("{gpu}")')
+    py_command.append(f'cc_trainer["dataDirectory"].setValue("{data_directory}")')
     py_command.append(f'cc_trainer["modelSize"].setValue({model_size})')
     py_command.append(f'cc_trainer["epochs"].setValue({epochs})')
     py_command.append(f'cc_trainer["imageInterval"].setValue({image_interval})')
     # cc_trainer["isCachingEnabled"].setValue("false")  # Talking to Foundry about this
-    py_command.append(f'cc_trainer["modelSize"].setValue({model_size})')
+    py_command.append(f'cc_trainer["modelSize"].setValue("{model_size}")')
     py_command.append(f'cc_trainer["cropSize"].setValue({crop_size})')
     py_command.append(f'cc_trainer["batchSizeType"].setValue("Auto")')  # Leaving unimplemented due to isues
     # cc_trainer["batchSize"].setValue(1)  # Manual Batch Size, Issues with implementation
@@ -51,8 +51,8 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
         f.write("# Created with CopyCat trainer\n")
         for line in py_command:
             f.write(f"{line}\n")
-        f.write(f'Created on {datetime.now()}')
-        f.write("End of file")
+        f.write(f'Created on {datetime.now()}\n')
+        f.write("End of file\n")
 
 
 def python_loc(nuke_script_dir):
@@ -61,6 +61,11 @@ def python_loc(nuke_script_dir):
     return python_file_loc
 
 def nuke_execute():
+    """
+    Generates OS specific command
+    Inputs: None
+    Outputs:
+    """
     if cur_sys == "Linux":
         nuke_execute_arg = "/usr/local/foundry/Nuke13.2v2/Nuke13.2 --nukex -i -t -gpu 0 -F 1-1 -X"
 
@@ -69,3 +74,5 @@ def nuke_execute():
 
     if cur_sys == "Darwin":
         nuke_execute_arg = "open -a /Applications/Nuke13.2v6/NukeX13.2v6.app --args --nukex -i -t -gpu 0 -F 1-1 -X"
+
+    return nuke_execute_arg
