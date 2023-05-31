@@ -63,8 +63,9 @@ class MainWindow(QDialog):
     def data_browsedir(self):
         # Taken from third assignment
         fname = QFileDialog.getExistingDirectory(self, 'Open Directory', f'/home/{current_user}')
-        self.data_dir_path.setText(fname[0])
-        self.data_dir = fname[0]
+        # print(fname)
+        self.data_dir_path.setText(fname)
+        self.data_dir = fname
 
     def script_browsedir(self):
         fname = QFileDialog.getOpenFileName(self, 'Open Nuke File', f'/home/{current_user}', 'Nuke Files (*.nk)')
