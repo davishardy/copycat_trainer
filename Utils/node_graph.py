@@ -4,14 +4,26 @@
 # Version 1.3.0
 
 # Import modules
-import nuke
+# import nuke
 import os
 from datetime import datetime
+import platform
+import sys
+
+# Load Nuke module
+cur_sys = platform.system()
+if cur_sys == "Darwin":
+    sys.path.append('/Applications/Nuke13.2v6/Nuke13.2v6.app/Contents/MacOS/plugins/nuke_internal')
+elif cur_sys == "Linux":
+    sys.path.append('/Applications/Nuke13.2v6/Nuke13.2v6.app/Contents/MacOS/plugins/nuke_internal')
+elif cur_sys == "Windows":
+    sys.path.append(r'C:\Program Files\Nuke13.2v2\Lib\site-packages')
+else:
+    pass
+
 
 # Create nodes
-
-
-def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, image_interval, model_size, crop_size, checkpoint_interval, nuke_file, python_file):
+def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, image_interval, crop_size, checkpoint_interval, nuke_file, python_file):
     py_command = []
     # Create read nodes
     py_command.append(f'gt_read = nuke.nodes.Read(name="Ground_Truth", file= {gt_file})')
@@ -31,7 +43,7 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
     # cc_trainer["batchSize"].setValue(1)  # Manual Batch Size, Issues with implementation
     py_command.append(f'cc_trainer["checkpointInterval"].setValue({checkpoint_interval})')
     # Save nuke file for training and further use
-    nuke.scriptSaveAs(nuke_file)
+    # nuke.scriptSaveAs(nuke_file)
 
     # Write python file with commands
     with open(python_file, 'w') as f:
@@ -41,3 +53,19 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
             f.write(f"{line}\n")
         f.write(f'Created on {datetime.now()}')
         f.write("End of file")
+
+
+def python_loc(nuke_script_dir):
+    nk_file_loc = os.path.dirname(nuke_script_dir)
+    python_file_loc = os.path.join(nk_file_loc, "train.py")
+    return python_file_loc
+
+def nuke_execute():
+    if cur_sys == "Linux":
+        nuke_execute_arg = "/usr/local/foundry/Nuke13.2v2/Nuke13.2 --nukex -i -t -gpu 0 -F 1-1 -X"
+
+    if cur_sys == "Windows":
+        nuke_execute_arg = r"C:\Program Files\Nuke13.2v2\Nuke13.2.exe --nukex -i -t -gpu 0 -F 1-1 -X"
+
+    if cur_sys == "Darwin":
+        nuke_execute_arg = "open -a /Applications/Nuke13.2v6/NukeX13.2v6.app --args --nukex -i -t -gpu 0 -F 1-1 -X"

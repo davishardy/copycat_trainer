@@ -71,3 +71,9 @@ def validate_inputs(paths):
         return True
     else:
         return False
+
+def get_pad(file_path):
+    elements = file_elements(file_path)
+    pad_size = len(elements[1])
+    pad = "#"*pad_size
+    return pad

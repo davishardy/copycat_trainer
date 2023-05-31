@@ -1,2 +1,5 @@
 import sys
-sys.path.append('/usr/local/python3.9/lib/python3.9/site-packages')
+import platform
+
+if platform.system() == "Darwin":
+        sys.path.append('/Applications/Nuke13.2v6/Nuke13.2v6.app/Contents/MacOS/plugins/nuke_internal')
