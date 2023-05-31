@@ -4,7 +4,6 @@
 # Version 1.1.0
 
 # Import modules
-import nuke
 import os
 import glob
 os.environ["OPENCV_IO_ENABLE_OPENEXR"]="1"
