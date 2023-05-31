@@ -1,35 +1,43 @@
+# Function to create node graph, nuke file, and python file for training
+# Created by Davis Hardy
+# Created on 2023-5-16
+# Version 1.3.0
+
+# Import modules
 import nuke
 import os
-
-gt_file = "/Users/davishardy/Downloads/sys_rf_arnold/output.0001-5.exr"
-input_file = "/Users/davishardy/Downloads/sys_rf_arnold/output.0001-5.exr"
-data_directory = "/Users/davishardy/SCAD/Sophomore/Spring/VSFX_270/P6/temp_train/"
-
-# check if file path exists
-# get padding
-# get begining and end
-# check if both sequences begining and ends are the same
-# check is sequence is complete
-# Create nodes and link them together
+from datetime import datetime
 
 # Create nodes
-gt_read = nuke.nodes.Read(name="Ground_Truth", file= gt_file)
-input_read = nuke.nodes.Read(name="Input", file= input_file)
-cc_trainer = nuke.nodes.CopyCat(name="Train", inputs= [input_read, gt_read])
-cc_trainer["useGPUIfAvailable"].setValue("true")
-cc_trainer["dataDirectory"].setValue(data_directory)   # Attach parm
-cc_trainer["modelSize"].setValue("Small") # Attach parm
-cc_trainer["epochs"].setValue(100)  # Attach parm
 
-cc_trainer["imageInterval"].setValue(100)
-# cc_trainer["isCachingEnabled"].setValue("false")  # Talking to Foundry about this
-cc_trainer["modelSize"].setValue("Medium")
-cc_trainer["cropSize"].setValue(256)
 
-cc_trainer["batchSizeType"].setValue("Auto")
-# cc_trainer["batchSize"].setValue(1)  # Manual Batch Size
+def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, image_interval, model_size, crop_size, checkpoint_interval, nuke_file, python_file):
+    py_command = []
+    # Create read nodes
+    py_command.append(f'gt_read = nuke.nodes.Read(name="Ground_Truth", file= {gt_file})')
+    py_command.append(f'input_read = nuke.nodes.Read(name="Input", file= {input_file})')
+    # Create CopyCat node
+    py_command.append(f'cc_trainer = nuke.nodes.CopyCat(name="Train", inputs= [input_read, gt_read])')
+    # Edit CopyCat node parameters
+    py_command.append(f'cc_trainer["useGPUIfAvailable"].setValue({gpu})')
+    py_command.append(f'cc_trainer["dataDirectory"].setValue({data_directory})')
+    py_command.append(f'cc_trainer["modelSize"].setValue({model_size})')
+    py_command.append(f'cc_trainer["epochs"].setValue({epochs})')
+    py_command.append(f'cc_trainer["imageInterval"].setValue({image_interval})')
+    # cc_trainer["isCachingEnabled"].setValue("false")  # Talking to Foundry about this
+    py_command.append(f'cc_trainer["modelSize"].setValue({model_size})')
+    py_command.append(f'cc_trainer["cropSize"].setValue({crop_size})')
+    py_command.append(f'cc_trainer["batchSizeType"].setValue("Auto")')  # Leaving unimplemented due to isues
+    # cc_trainer["batchSize"].setValue(1)  # Manual Batch Size, Issues with implementation
+    py_command.append(f'cc_trainer["checkpointInterval"].setValue({checkpoint_interval})')
+    # Save nuke file for training and further use
+    nuke.scriptSaveAs(nuke_file)
 
-cc_trainer["checkpointInterval"].setValue(1000)
-
-# nuke.execute(cc_trainer, 1, 1)
-# nuke.scriptSaveAs
+    # Write python file with commands
+    with open(python_file, 'w') as f:
+        f.write(f"# File that creates node graph\n")
+        f.write("# Created with CopyCat trainer\n")
+        for line in py_command:
+            f.write(f"{line}\n")
+        f.write(f'Created on {datetime.now()}')
+        f.write("End of file")
