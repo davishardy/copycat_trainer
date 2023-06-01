@@ -115,7 +115,12 @@ class MainWindow(QDialog):
                                     python_loc
 
             )
-            nuke_command = f"{node_util.nuke_execute()} 'Train' {self.script_dir} {python_loc}"
+            
+
+            if cur_sys == "Darwin":
+                nuke_command = f"{node_util.nuke_execute()} 'Train' {self.script_dir} -- script {python_loc}"
+            elif cur_sys != "Darwin":
+                nuke_command = f"{node_util.nuke_execute()} 'Train' {self.script_dir} {python_loc}"
             self.command_line_command.setText(nuke_command)
 
 
