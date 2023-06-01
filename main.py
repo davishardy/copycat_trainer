@@ -1,4 +1,4 @@
-"""#!/usr/local/foundry/Nuke13.2v2/python"""
+"""#!/usr/local/foundry/Nuke13.2v2/python"""  # Experimentation 
 
 # GUI linking and main functions
 # Created by Davis Hardy
@@ -30,7 +30,7 @@ elif cur_sys == "Windows":
 else:
     print("Your system can't possibly have Nuke")
 
-
+# Get username for use in paths
 current_user = os.path.expanduser("~")
 
 
@@ -41,6 +41,7 @@ class MainWindow(QDialog):
         super().__init__()
         loadUi("./Interface/trainer_v4.ui", self)
 
+        # File browse buttons
         self.gt_file_browse.clicked.connect(self.gt_browseimage)
         self.input_file_browse.clicked.connect(self.input_browseimage)
         self.data_dir_browse.clicked.connect(self.data_browsedir)
@@ -73,6 +74,7 @@ class MainWindow(QDialog):
         self.script_dir = fname[0]
 
     def generate_nk_python(self):
+        # Parameter linking
         if self.gpu_switch.isChecked() == True:
             self.gpu_on = "true"
         else:
@@ -90,18 +92,17 @@ class MainWindow(QDialog):
         except ValueError:
             print("nope")
         else:
+            # Create filenames with #'s instead of frame numbers
             padding = frame_util.get_pad(self.gt_filepath)
-
             gt_elements = frame_util.file_elements(self.gt_filepath)
             gt_dir = os.path.dirname(self.gt_filepath)
             gt_with_pad = os.path.join(gt_dir, f"{gt_elements[0]}.{padding}.{gt_elements[2]}")
-
             input_elements = frame_util.file_elements(self.input_filepath)
             input_dir = os.path.dirname(self.input_filepath)
             input_with_pad = os.path.join(input_dir, f"{input_elements[0]}.{padding}.{input_elements[2]}")
 
             python_loc = node_util.python_loc(self.script_dir)
-
+            # Create python file for use in Nuke GUI
             node_util.create_python(gt_with_pad,
                                     input_with_pad,
                                     self.gpu_on,
@@ -118,14 +119,17 @@ class MainWindow(QDialog):
             
 
             if cur_sys == "Darwin":
-                nuke_command = f"{node_util.nuke_execute()} 'Train' {self.script_dir} -- script {python_loc}"
+                # Modified command line argument for mac, doesn't work at the moment due to Mac CLI behavior
+                nuke_command = f"{node_util.nuke_execute()} 'Train' -- script {python_loc}"
             elif cur_sys != "Darwin":
+                # Command for other OS's
                 nuke_command = f"{node_util.nuke_execute()} 'Train' {self.script_dir} {python_loc}"
             self.command_line_command.setText(nuke_command)
 
 
 
 def main():
+    # Init GUI
     app = QApplication(sys.argv)
     win = MainWindow()
     widget = QtWidgets.QStackedWidget()

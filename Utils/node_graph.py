@@ -42,7 +42,7 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
     # cc_trainer["batchSize"].setValue(1)  # Manual Batch Size, Issues with implementation
     py_command.append(f'cc_trainer["checkpointInterval"].setValue({checkpoint_interval})')
     # Save nuke file for training and further use
-    # nuke.scriptSaveAs(nuke_file)
+    py_command.append(f'nuke.scriptSaveAs("{nuke_file}")')
 
     # Write python file with commands
     with open(python_file, 'w') as f:
@@ -55,6 +55,7 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
 
 
 def python_loc(nuke_script_dir):
+    # Find location to save the python file
     nk_file_loc = os.path.dirname(nuke_script_dir)
     python_file_loc = os.path.join(nk_file_loc, "train.py")
     return python_file_loc
