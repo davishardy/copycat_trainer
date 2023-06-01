@@ -33,7 +33,6 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
     # Edit CopyCat node parameters
     py_command.append(f'cc_trainer["useGPUIfAvailable"].setValue("{gpu}")')
     py_command.append(f'cc_trainer["dataDirectory"].setValue("{data_directory}")')
-    py_command.append(f'cc_trainer["modelSize"].setValue({model_size})')
     py_command.append(f'cc_trainer["epochs"].setValue({epochs})')
     py_command.append(f'cc_trainer["imageInterval"].setValue({image_interval})')
     # cc_trainer["isCachingEnabled"].setValue("false")  # Talking to Foundry about this
@@ -51,8 +50,8 @@ def create_python(gt_file, input_file, gpu, data_directory, model_size, epochs, 
         f.write("# Created with CopyCat trainer\n")
         for line in py_command:
             f.write(f"{line}\n")
-        f.write(f'Created on {datetime.now()}\n')
-        f.write("End of file\n")
+        f.write(f'# Created on {datetime.now()}\n')
+        f.write("# End of file\n")
 
 
 def python_loc(nuke_script_dir):
